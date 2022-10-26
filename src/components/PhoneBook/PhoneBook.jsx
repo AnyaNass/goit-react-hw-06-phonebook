@@ -22,6 +22,7 @@ export function PhoneBook({ onSubmit }) {
 	const handleSubmit = e => {
 		e.preventDefault();
 		onSubmit(name, number);
+
 		setName('');
 		setNumber('');
 	}

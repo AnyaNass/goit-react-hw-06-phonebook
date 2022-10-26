@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { nanoid } from 'nanoid'
 
 import { PhoneBook } from '../components/PhoneBook/PhoneBook'
@@ -9,8 +9,16 @@ import { DefaultPage } from './DefaultPage/DefaultPage'
 import { Modal } from './Modal/Modal'
 import { Alert } from './ModalAlert/ModalAlert'
 
+import { useDispatch, useSelector } from 'react-redux';
+import { selectContact } from 'redux/contacts/contactsSelector';
+import { addContact } from 'redux/contacts/contactsSlice';
+import { filterContact } from 'redux/contacts/filterSlice';
+
+
 export function App() {
-	const [contacts, setContacts] = useState(() => JSON.parse(localStorage.getItem('contacts')) ?? []);
+	const dispatch = useDispatch();
+	const contacts = useSelector(selectContact);
+
 	const [filter, setFilter] = useState('');
 	const [showModal, setShowModal] = useState(false);
 	const [filteredContacts, setFilteredContacts] = useState([]);
@@ -23,10 +31,6 @@ export function App() {
 		CONTACTS_LIST: contacts.length > 0 && !filter && filteredContacts.length === 0,
 	}
 
-	useEffect(() => {
-		localStorage.setItem('contacts', JSON.stringify(contacts));
-	}, [contacts]);
-
 	const submitHandler = (name, number) => {
 		const names = contacts.map(contact => contact.name.toLowerCase())
 
@@ -35,19 +39,21 @@ export function App() {
 			return;
 		}
 
-		setContacts([...contacts, { name: name, id: nanoid(), number: number }])
-	}
+		const newContact = {
+			name,
+			number,
+			id: nanoid(),
+		}
 
-	const deleteContact = (itemId) => {
-		setContacts(contacts.filter(contact => contact.id !== itemId))
+		dispatch(addContact(newContact));
 	}
 
 	const toggleModal = () => {
 		setShowModal(prevSate => !prevSate)
 	}
 
-	const changeFilter = e => {
-		const query = e.target.value;
+	const changeFilter = query => {
+		const filter = dispatch(filterContact(query));
 
 		setFilter(query);
 
@@ -56,9 +62,9 @@ export function App() {
 			return;
 		}
 
-		const normalizedFilter = query.toLowerCase();
-		setFilteredContacts(contacts.filter(contact => contact.name.toLowerCase().includes(normalizedFilter)))
+		setFilteredContacts(contacts.filter(contact => contact.name.toLowerCase().includes(filter.payload)))
 	}
+
 
 	return (<>
 		<Container text="PhoneBook">
@@ -70,9 +76,9 @@ export function App() {
 		<Container text="Contacts">
 			{stateMachine.DEFAULT_PAGE && <DefaultPage text="Add someone to your contacts" />}
 			{stateMachine.FILTER_FIELD && <Filter onChange={changeFilter} />}
-			{stateMachine.FILTERED_CONTACTS && <ContactsList state={filteredContacts} deleteContact={deleteContact} />}
+			{stateMachine.FILTERED_CONTACTS && <ContactsList state={filteredContacts} />}
 			{stateMachine.NO_FILTER_RESULTS && <DefaultPage text="There is not such a contact" />}
-			{stateMachine.CONTACTS_LIST && <ContactsList state={contacts} deleteContact={deleteContact} />}
+			{stateMachine.CONTACTS_LIST && <ContactsList state={contacts} />}
 		</Container>
 	</>
 	)

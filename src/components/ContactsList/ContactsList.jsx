@@ -1,8 +1,12 @@
-import PropTypes from 'prop-types';
 import { FaMobileAlt, FaRegTrashAlt } from 'react-icons/fa';
 import { List, ListItem, ItemInfo, Info, DeleteButton } from './ContactsList.styled'
 
-export const ContactsList = ({ state, deleteContact }) => {
+import { useDispatch } from 'react-redux';
+import { deleteContact } from 'redux/contacts/contactsSlice';
+
+export const ContactsList = ({ state }) => {
+	const dispatch = useDispatch();
+
 	return (
 		<List>
 			{state.map(item => {
@@ -12,14 +16,9 @@ export const ContactsList = ({ state, deleteContact }) => {
 						<Info>{item.name}:</Info>
 						<Info>{item.number}</Info>
 					</ItemInfo>
-					<DeleteButton type="button" onClick={() => deleteContact(item.id)}><FaRegTrashAlt /></DeleteButton>
+					<DeleteButton type="button" onClick={() => dispatch(deleteContact(item.id))}><FaRegTrashAlt /></DeleteButton>
 				</ListItem>
 			})}
 		</List >
 	)
-}
-
-ContactsList.propTypes = {
-	state: PropTypes.arrayOf(PropTypes.object).isRequired,
-	deleteContact: PropTypes.func.isRequired,
 }
