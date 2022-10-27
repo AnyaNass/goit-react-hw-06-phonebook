@@ -2,14 +2,12 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const filterSlice = createSlice({
 	name: "filter",
-	initialState: '',
+	initialState: { filter: "" },
 	reducers: {
-		filterContact: ({ payload }) => payload.toLowerCase(),
+		filterContact: (state, { payload }) => { state.filter = payload },
 	}
 })
 
 export const { filterContact } = filterSlice.actions;
 
 export default filterSlice.reducer;
-
-// state.filter(contact => contact.name.toLowerCase().includes(payload.toLowerCase()))

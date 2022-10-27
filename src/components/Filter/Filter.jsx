@@ -1,19 +1,18 @@
-import PropTypes from 'prop-types';
+import { useDispatch } from 'react-redux';
+import { filterContact } from 'redux/contacts/filterSlice';
 import { FaSearch } from 'react-icons/fa';
 import { FilterWrapper, FilterField, Label, FilterInput } from './Filter.styled'
 
+export const Filter = () => {
+	const dispatch = useDispatch();
 
-export const Filter = ({ onChange }) => {
 	return (
 		<FilterWrapper>
 			<FilterField>
 				<Label><FaSearch /></Label>
-				<FilterInput type="text" onChange={e => onChange(e.target.value)} />
+				<FilterInput type="text" onChange={e => dispatch(filterContact(e.target.value.toLocaleLowerCase()))} />
 			</FilterField>
 		</FilterWrapper>
 	)
 }
 
-Filter.propTypes = {
-	onChange: PropTypes.func.isRequired,
-}

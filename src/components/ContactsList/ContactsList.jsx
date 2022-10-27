@@ -1,8 +1,7 @@
-import { FaMobileAlt, FaRegTrashAlt } from 'react-icons/fa';
-import { List, ListItem, ItemInfo, Info, DeleteButton } from './ContactsList.styled'
-
 import { useDispatch } from 'react-redux';
 import { deleteContact } from 'redux/contacts/contactsSlice';
+import { FaMobileAlt, FaRegTrashAlt } from 'react-icons/fa';
+import { List, ListItem, ItemInfo, Info, DeleteButton } from './ContactsList.styled'
 
 export const ContactsList = ({ state }) => {
 	const dispatch = useDispatch();
